@@ -42,7 +42,7 @@ public class Pollux{
 		RegulatedMotor l1 = new EV3LargeRegulatedMotor(MotorPort.A);
 		RegulatedMotor r1= new EV3LargeRegulatedMotor(MotorPort.B);
 		RegulatedMotor[]sr1= new RegulatedMotor[1];
-		l1.synchronizeWith(sr1);
+		//l1.synchronizeWith(sr1);
 		RegulatedMotor pince= new EV3LargeRegulatedMotor(MotorPort.D);
 		
 		
@@ -76,7 +76,7 @@ public class Pollux{
 			sp3.fetchSample(sample3,0);
 			
 			//activation des roues pour avancer
-			l1.startSynchronization();
+			//l1.startSynchronization();
 			l1.forward();
 			r1.forward();
 			Delay.msDelay((long) (200/frequency));
@@ -97,11 +97,11 @@ public class Pollux{
 			// condition qui permet d'utiliser le capteur ultrason pour eviter les obstacle en faisant un quart de tour
 			if(sample2[0]<0.5) {
 				Sound.playTone(2000 ,100);
-				l1.endSynchronization();
+				//l1.endSynchronization();
 				l1.stop();
 				r1.stop();
 				l1.rotate(360);
-				l1.startSynchronization();
+				//l1.startSynchronization();
 			}
 		}
 		l1.close();
