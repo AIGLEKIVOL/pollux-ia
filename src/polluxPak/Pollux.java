@@ -24,6 +24,8 @@ import lejos.hardware.Button;
 import lejos.hardware.lcd.GraphicsLCD;
 import lejos.hardware.lcd.LCD;
 import lejos.utility.Delay;
+import lejos.robotics.Color;
+
 
 public class Pollux{
 
