@@ -35,7 +35,7 @@ public class Sensors {
 		touch = new EV3TouchSensor(SensorPort.S3);
 		color = new EV3ColorSensor(SensorPort.S4);
 		// TODO Auto-generated constructor stub
-	}
+	}3
 	
 	public getUltrason() {
 		// TODO obtenir la distance captée par le capteur uss
