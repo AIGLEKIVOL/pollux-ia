@@ -1,5 +1,7 @@
 package polluxPak;
+import java.awt.Color;
 import java.io.IOException;
+import java.util.Properties;
 import java. util.Scanner;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.UnregulatedMotor;
@@ -7,10 +9,12 @@ import lejos.hardware.motor.BaseRegulatedMotor;
 import lejos.hardware.port.MotorPort;
 import lejos.hardware.port.Port;
 import lejos.hardware.port.SensorPort;
+import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3IRSensor;
 import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.hardware.sensor.SensorModes;
+import lejos.remote.ev3.RMISampleProvider;
 import lejos.robotics.EncoderMotor;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.SampleProvider;
@@ -24,10 +28,9 @@ import lejos.hardware.Button;
 import lejos.hardware.lcd.GraphicsLCD;
 import lejos.hardware.lcd.LCD;
 import lejos.utility.Delay;
-import lejos.robotics.Color;
-
 
 public class Pollux{
+
 
 	public Pollux() {
 		// TODO Auto-generated constructor stub
@@ -36,6 +39,9 @@ public class Pollux{
 		// Creation d'instance des classe UltrasonicSensor et TouchSensor
 		EV3UltrasonicSensor uss = new EV3UltrasonicSensor(SensorPort.S1);
 		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S3);
+		RMISampleProvider sampleProvider=null;
+		EV3ColorSensor color = new EV3ColorSensor(SensorPort.S4);
+		
 		
 		
 		
@@ -43,8 +49,10 @@ public class Pollux{
 		//les 2 roues et la pince
 		RegulatedMotor l1 = new EV3LargeRegulatedMotor(MotorPort.A);
 		RegulatedMotor r1= new EV3LargeRegulatedMotor(MotorPort.B);
-		RegulatedMotor[]sr1= new RegulatedMotor[1];
-		l1.synchronizeWith(sr1);
+		
+
+		l1.synchronizeWith(new RegulatedMotor[] {r1});
+		
 		RegulatedMotor pince= new EV3LargeRegulatedMotor(MotorPort.D);
 		
 		
@@ -56,7 +64,9 @@ public class Pollux{
 		SampleProvider sp3= new PublishFilter(touch.getTouchMode(),"Touch readings", frequency);
 		float [] sample3 = new float [sp3.sampleSize()];
 		
+	
 		
+		l1.startSynchronization();
 		///Boucle d'action
 		int pallet=0;
 		//La condition d'arret est que l'on presse la touche "echap"
@@ -73,39 +83,56 @@ public class Pollux{
 				pallet=0;
 			}
 			
+			
 			// recuperation des infos sensoriels
 			sp2.fetchSample(sample2,0);
 			sp3.fetchSample(sample3,0);
+
 			
 			//activation des roues pour avancer
-			l1.startSynchronization();
+			
 			l1.forward();
 			r1.forward();
 			Delay.msDelay((long) (200/frequency));
 			
-			
+		
 			// condition permetant d'activer la pince si un pallet touche le recepteur
 			if (sample3[0]==1) {
-				
 				l1.stop();
 				r1.stop();
-				pince.rotate(-360);
+				pince.rotate(-720);
+				pallet=1;
 				l1.forward();
 				r1.forward();
-				pallet=1;
 				
 			}
 			
 			// condition qui permet d'utiliser le capteur ultrason pour eviter les obstacle en faisant un quart de tour
-			if(sample2[0]<0.5) {
+			while(sample2[0]<0.5) {
 				Sound.playTone(2000 ,100);
+				sp2.fetchSample(sample2,0);
+				if (sample2[0]<0.3) {
+					
+				}
+					
+				int rnd=(int)(Math.random()*2)+1;
+				if(rnd==1) {
 				l1.endSynchronization();
-				l1.stop();
 				r1.stop();
 				l1.rotate(360);
 				l1.startSynchronization();
+				}else {
+					l1.endSynchronization();
+					l1.stop();
+					r1.rotate(360);
+					l1.startSynchronization();
+				}
+				sp2.fetchSample(sample2,0);
 			}
+			l1.endSynchronization();
+			
 		}
+		
 		l1.close();
 		r1.close();
 		uss.close();
