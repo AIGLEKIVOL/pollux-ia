@@ -20,7 +20,7 @@ public class Capteurs {
 	private EV3TouchSensor touch; //creation d'un objet touch venant de la classe TouchSensor
 	private SampleProvider tsp; //création de l'instance récupérant les données du capteur de touché implentées dans le tab sample provider 
 	private float[]sampleTouch; //création de tab de flottant permettant de stocker les données récupérées par le capteur de touché
-	public static float frequence=1; //
+	public static float frequence=1; //attribut de fréquence standart de captage de donnée
 	TestColor color; //creation d'un objet color venant de la classe TestColor
 	
 	// constructeur, initialise les attributs d'instance
