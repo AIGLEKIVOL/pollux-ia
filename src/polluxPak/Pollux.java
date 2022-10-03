@@ -45,7 +45,7 @@ public class Pollux{
 		
 		
 		
-		//Creation d'instance de la classe RegulatedMotor pour controller
+		//Creation d'instance de la classe RegulatedMotor pour controler
 		//les 2 roues et la pince
 		RegulatedMotor l1 = new EV3LargeRegulatedMotor(MotorPort.A);
 		RegulatedMotor r1= new EV3LargeRegulatedMotor(MotorPort.B);

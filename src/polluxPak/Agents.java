@@ -21,7 +21,7 @@ public class Agents {
 		capteurs= new Capteurs (s1,s3,s4);
 		moteurs= new Actionneurs (A,B,D);
 	}
-	public void detectionPallet() {
+	public boolean detectionPallet() {
 		moteurs.avance();
 		if(capteurs.getDistance()<0.4) {
 			double dist=capteurs.getDistance();
@@ -29,25 +29,67 @@ public class Agents {
 			if(capteurs.getDistance()>dist)
 			{
 				moteurs.actionPince();
-			}
+				return true;
+			}else {
 				while(capteurs.getDistance()<0.2) {
 					moteurs.tourner(true,1);
+			}
+				return false;
+
 			}
 
 	
 		}
+		return false;
+	}
+	public boolean tournerLigne(String c, int i) {
+		if(capteurs.getColor().equals(c)) {
+			return false;
+		}else {
+			if(i%2==1) {
+				moteurs.tourner(true,1);
+			}else {
+				moteurs.tourner(false,1);
+			}
+			return true;
+		}
+		
+	}
+	public void majColor() {
+		
 	}
 	public void action() {
 		LCD.clearDisplay();
+		int i=1;
 		while(!Button.ESCAPE.isDown()) {
+			String colorT=capteurs.getColor();
 			LCD.clear(4);
 			LCD.clear(5);
 			LCD.drawString("Distance : "+capteurs.getDistance(), 0,4);
-			LCD.drawString("couleur : "+capteurs.getColor(), 0,5);
+			LCD.drawString("couleur : "+colorT, 0,5);
+			
 			capteurs.maj();
 			moteurs.avance();
 			Delay.msDelay(100);
-			detectionPallet();
+			if(tournerLigne(colorT,i)) {
+				i++;
+			}
+			if(detectionPallet()) {
+				if(!(moteurs.getAngle()==0)) {
+					while(moteurs.getAngle()<0) {
+						moteurs.tourner(true,1);
+					}
+					while(moteurs.getAngle()>0) {
+						moteurs.tourner(false,1);
+					}
+
+				}
+				while(!capteurs.getColor().equals("white")) {
+					moteurs.avance();
+				}
+				moteurs.stop();
+				moteurs.lacherPallet();
+			}
 			
 			}
 		
@@ -63,3 +105,4 @@ public class Agents {
 	}
 
 }
+

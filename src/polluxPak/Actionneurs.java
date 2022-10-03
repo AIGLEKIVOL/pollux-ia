@@ -1,4 +1,3 @@
-
 package polluxPak;
 
 import lejos.hardware.Button;
@@ -13,7 +12,8 @@ public class Actionneurs {
 	 RegulatedMotor l1;
 	 RegulatedMotor r1;
 	private RegulatedMotor pince;
-	private static final int QuartT =360;
+	private int angle;
+	private static final int QuartT =310;
 	private static final boolean DROITE=true;
 	private static final boolean GAUCHE=false;
 
@@ -23,9 +23,10 @@ public class Actionneurs {
 		l1 = new EV3LargeRegulatedMotor(A);
 		r1= new EV3LargeRegulatedMotor(B);
 		pince= new EV3LargeRegulatedMotor(D);
-		pince.setSpeed(700);
+		pince.setSpeed(1000);
 		l1.synchronizeWith(new RegulatedMotor[] {r1});
 		l1.startSynchronization();
+		angle=0;
 	}
 	public Actionneurs() {
 		// TODO Auto-generated constructor stub
@@ -46,13 +47,30 @@ public class Actionneurs {
 		
 }
 	public void recule() {
+		l1.startSynchronization();
 		l1.backward();
 		r1.backward();
+		l1.endSynchronization();
+	}
+	public void lacherPallet() {
+		stop();
+		pince.rotate(3*QuartT);
+		recule();
+		Delay.msDelay(100);
+		pince.rotate(-3*QuartT);
+		r1.stop();
+		tournerR(true,2);
 		
 	}
+	public int getAngle() {
+		return angle;
+	}
 	public void stop() {
+		l1.startSynchronization();
 		l1.stop();
-		l1.stop();
+		r1.stop();
+
+		l1.endSynchronization();
 	}
 	public void actionPince() {
 		pince.rotate(3*QuartT);
@@ -63,9 +81,24 @@ public class Actionneurs {
 		if(dir==DROITE) {
 			r1.stop();
 			l1.rotate(QuartT*nbQuartT);
+			angle= angle +QuartT*nbQuartT;
 		}else if(dir==GAUCHE) {
 			l1.stop();
 			r1.rotate(QuartT*nbQuartT);
+			angle= angle -QuartT*nbQuartT;
+		}
+		l1.startSynchronization();
+	}
+	public void tournerR(boolean dir,int nbQuartT) {
+		l1.endSynchronization();
+		if(dir==DROITE) {
+			r1.stop();
+			l1.rotate(-QuartT*nbQuartT);
+			angle= angle +QuartT*nbQuartT;
+		}else if(dir==GAUCHE) {
+			l1.stop();
+			r1.rotate(-QuartT*nbQuartT);
+			angle= angle -QuartT*nbQuartT;
 		}
 		l1.startSynchronization();
 	}
@@ -78,3 +111,4 @@ public class Actionneurs {
 
 	}
 }
+
